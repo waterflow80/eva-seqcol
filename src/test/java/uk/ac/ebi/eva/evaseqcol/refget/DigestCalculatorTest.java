@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import uk.ac.ebi.eva.evaseqcol.entities.SeqColLevelOneEntity;
 import uk.ac.ebi.eva.evaseqcol.utils.JSONLevelOne;
+import uk.ac.ebi.eva.evaseqcol.utils.JSONExtData;
 
 import java.io.IOException;
 
@@ -30,12 +31,14 @@ class DigestCalculatorTest {
         JSONLevelOne jsonLevelOne = new JSONLevelOne().setSequences(SEQUENCES)
                                                       .setNames(NAMES).setLengths(LENGTHS);
         levelOneEntity.setObject(jsonLevelOne);
+
     }
 
     @Test
     void getDigest() throws IOException {
-        String res1 = digestCalculator.getDigest(levelOneEntity.toString());
-        String res2 = digestCalculator.getDigest(ARRAY_TEST);
+        String res1 = digestCalculator.generateDigest(levelOneEntity.toString());
+        String res2 = digestCalculator.generateDigest(ARRAY_TEST);
+        //String res3 = digestCalculator.getDigest(jsonLevelTwo.toString());
         assertEquals(DIGEST, res1);
         assertEquals(ARRAY_DIGEST, res2);
     }

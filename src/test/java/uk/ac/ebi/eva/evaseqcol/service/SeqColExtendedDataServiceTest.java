@@ -12,6 +12,7 @@ import uk.ac.ebi.eva.evaseqcol.entities.AssemblySequenceEntity;
 import uk.ac.ebi.eva.evaseqcol.entities.ChromosomeEntity;
 import uk.ac.ebi.eva.evaseqcol.entities.SeqColEntity;
 import uk.ac.ebi.eva.evaseqcol.entities.SeqColExtendedDataEntity;
+import uk.ac.ebi.eva.evaseqcol.entities.SeqColLevelTwoEntity;
 import uk.ac.ebi.eva.evaseqcol.entities.SeqColSequenceEntity;
 import uk.ac.ebi.eva.evaseqcol.entities.SequenceEntity;
 import uk.ac.ebi.eva.evaseqcol.refget.ChecksumCalculator;
@@ -26,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("seqcol")
-class SeqColExtendedDataEntityServiceTest {
+class SeqColExtendedDataServiceTest {
 
 
     private final String REPORT_FILE_PATH_1 = "src/test/resources/GCA_000146045.2_R64_assembly_report.txt";
@@ -346,12 +346,32 @@ class SeqColExtendedDataEntityServiceTest {
     }
 
     /**
-     * Return the 3 seqcol objects (names, lengths and sequences) of the given naming convention*/
-    List<SeqColExtendedDataEntity> constructLevelTwoSeqCols(AssemblyEntity assemblyEntity, AssemblySequenceEntity sequenceEntity,
-                                                            SeqColEntity.NamingConvention convention) throws IOException {
+     * Return the 3 extended objects (names, lengths and sequences) of the given naming convention*/
+    List<SeqColExtendedDataEntity> constructExtendedSeqColDataList(AssemblyEntity assemblyEntity, AssemblySequenceEntity assemblySequenceEntity,
+                                                            SeqColEntity.NamingConvention convention, String accession) throws IOException {
         // Sorting the chromosomes' list (assemblyEntity) and the sequences' list (sequencesEntity) in the same order
-        sortReportAndSequencesBySequenceIdentifier(assemblyEntity, sequenceEntity, GCA_ACCESSION);
-        List<SeqColExtendedDataEntity> entities = new Li
+        sortReportAndSequencesBySequenceIdentifier(assemblyEntity, assemblySequenceEntity, accession);
+        return Arrays.asList(
+                constructSeqColSequencesObject(assemblySequenceEntity),
+                constructSeqColNamesObject(assemblyEntity, convention),
+                constructSeqColLengthsObject(assemblyEntity)
+        );
+    }
+
+    /**
+     * Construct and return a Level Two (with exploded data) SeqCol entity out of the given assemblyEntity and the
+     * assemblySequencesEntity*/
+    SeqColLevelTwoEntity constructSeqColLevelTwo(AssemblyEntity assemblyEntity, AssemblySequenceEntity assemblySequenceEntity,
+                                                 SeqColEntity.NamingConvention convention, String accession) throws IOException {
+        SeqColLevelTwoEntity seqColLevelTwo = new SeqColLevelTwoEntity();
+        sortReportAndSequencesBySequenceIdentifier(assemblyEntity, assemblySequenceEntity, accession);
+        SeqColExtendedDataEntity extendedNamesData = constructSeqColNamesObject(assemblyEntity, convention);
+        SeqColExtendedDataEntity extendedLengthsData = constructSeqColLengthsObject(assemblyEntity);
+        SeqColExtendedDataEntity extendedSequencesData = constructSeqColSequencesObject(assemblySequenceEntity);
+        seqColLevelTwo.setNames(extendedNamesData.getObject().getObject());
+        seqColLevelTwo.setLengths(extendedLengthsData.getObject().getObject());
+        seqColLevelTwo.setSequences(extendedSequencesData.getObject().getObject());
+        return seqColLevelTwo;
     }
 
     /**
@@ -428,13 +448,18 @@ class SeqColExtendedDataEntityServiceTest {
         //List<SeqColExtendedDataEntity> fetchEntities = levelTwoService.addAll(levelTwoEntities);
         //assertNotNull(fetchEntities);
         //assertTrue(fetchEntities.size() > 0);
-        sortReportAndSequencesBySequenceIdentifier(assemblyEntity, assemblySequenceEntity, GCA_ACCESSION);
+        /*sortReportAndSequencesBySequenceIdentifier(assemblyEntity, assemblySequenceEntity, GCA_ACCESSION);
         SeqColExtendedDataEntity seqColNamesObject = constructSeqColLengthsObject(assemblyEntity);
         assertNotNull(seqColNamesObject);
         assertNotNull(seqColNamesObject.getDigest());
-        System.out.println("DIGEST: " + seqColNamesObject.getDigest());
+        System.out.println("DIGEST: " + seqColNamesObject.getDigest());*/
+
+        SeqColLevelTwoEntity levelTwoEntity = constructSeqColLevelTwo(assemblyEntity, assemblySequenceEntity, SeqColEntity.NamingConvention.GENBANK,
+                                                                      GCA_ACCESSION);
+        assertNotNull(levelTwoEntity);
+        assertTrue(levelTwoEntity.getLengths().size() > 0);
         for (int i=0; i<5; i++) {
-            System.out.println(seqColNamesObject.getObject().getObject().get(i));
+            System.out.println(levelTwoEntity.getNames().get(i));
         }
     }
 }

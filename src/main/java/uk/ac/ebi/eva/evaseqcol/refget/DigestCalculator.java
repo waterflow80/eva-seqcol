@@ -1,7 +1,6 @@
 package uk.ac.ebi.eva.evaseqcol.refget;
 
 import org.erdtman.jcs.JsonCanonicalizer;
-import org.hibernate.event.spi.SaveOrUpdateEvent;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -15,7 +14,7 @@ public class DigestCalculator {
      * Generate the level0 digest out of a level 1 object.
      * LevelOneObject: A json object that has three elements: Sequences, names and lengths.
      * */
-    public String getDigest(String input) throws IOException {
+    public String generateDigest(String input) throws IOException {
         jc = new JsonCanonicalizer(input);
         byte[] hashed =  sha512Calculator.SHA512Hash(jc.getEncodedString());
         byte[] truncatedSequence = Arrays.copyOfRange(hashed, 0, 24);
