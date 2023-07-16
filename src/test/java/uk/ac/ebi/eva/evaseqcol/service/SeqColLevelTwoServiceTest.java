@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import uk.ac.ebi.eva.evaseqcol.entities.SeqColLevelTwoEntity;
 
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("seqcol")
+@Testcontainers
 class SeqColLevelTwoServiceTest {
 
     private String LEVEL_0_DIGEST = "Y2ujWD8fTeC86uKbL22N2jyMYrcX0cN0";
