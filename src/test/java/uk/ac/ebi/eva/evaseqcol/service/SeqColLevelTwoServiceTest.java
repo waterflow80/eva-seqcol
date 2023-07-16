@@ -1,5 +1,6 @@
 package uk.ac.ebi.eva.evaseqcol.service;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +39,9 @@ class SeqColLevelTwoServiceTest {
     }
 
     @Test
+    @Disabled
     void getSeqColLevelTwoByDigest() {
+        // The object to fetch should already be in the database
         Optional<SeqColLevelTwoEntity> levelTwoEntity = levelTwoService.getSeqColLevelTwoByDigest(LEVEL_0_DIGEST);
         assertTrue(levelTwoEntity.isPresent());
         assertTrue(levelTwoEntity.get().getLengths().size() > 0);
