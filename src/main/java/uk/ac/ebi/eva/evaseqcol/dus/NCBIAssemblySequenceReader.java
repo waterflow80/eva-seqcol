@@ -2,12 +2,11 @@ package uk.ac.ebi.eva.evaseqcol.dus;
 
 import uk.ac.ebi.eva.evaseqcol.entities.AssemblySequenceEntity;
 import uk.ac.ebi.eva.evaseqcol.entities.SeqColSequenceEntity;
-import uk.ac.ebi.eva.evaseqcol.refget.ChecksumCalculator;
-import uk.ac.ebi.eva.evaseqcol.refget.MD5Calculator;
+import uk.ac.ebi.eva.evaseqcol.refget.MD5ChecksumCalculator;
+import uk.ac.ebi.eva.evaseqcol.refget.SHA512ChecksumCalculator;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,11 +16,12 @@ public class NCBIAssemblySequenceReader extends AssemblySequenceReader {
     }
 
     @Override
-    protected void parseFile() throws IOException, NullPointerException, NoSuchAlgorithmException {
+    protected void parseFile() throws IOException, NullPointerException {
         if (reader == null){
             throw new NullPointerException("Cannot use AssemblySequenceReader without having a valid InputStreamReader.");
         }
-        ChecksumCalculator md5Calculator = new MD5Calculator();
+        MD5ChecksumCalculator md5ChecksumCalculator = new MD5ChecksumCalculator();
+        SHA512ChecksumCalculator sha512ChecksumCalculator = new SHA512ChecksumCalculator();
         if (assemblySequenceEntity == null){
             assemblySequenceEntity = new AssemblySequenceEntity();
         }
@@ -41,21 +41,16 @@ public class NCBIAssemblySequenceReader extends AssemblySequenceReader {
                     sequenceValue.append(line);
                     line = reader.readLine();
                 }
-                String md5checksum = md5Calculator.calculateChecksum(sequenceValue.toString().toUpperCase());
+                String md5checksum = md5ChecksumCalculator.calculateChecksum(sequenceValue.toString());
+                String sha512Checksum = sha512ChecksumCalculator.calculateRefgetChecksum(sequenceValue.toString());
                 sequence.setSequenceMD5(md5checksum);
+                sequence.setSequence(sha512Checksum);
                 sequences.add(sequence);
             }
         }
         assemblySequenceEntity.setSequences(sequences);
         fileParsed = true;
         reader.close();
-    }
-
-    /**
-     * Normalize the given sequence following the
-     * */
-    String calculateChecksum(String sequence) {
-        return "";
     }
 
 }
