@@ -1,5 +1,7 @@
 package uk.ac.ebi.eva.evaseqcol.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ public class SeqColLevelTwoService {
     @Autowired
     private SeqColLevelOneService levelOneService;
 
+    private final Logger logger = LoggerFactory.getLogger(SeqColLevelTwoService.class);
+
     /**
      * Make 2 recursive lookups to retrieve and construct the seqCol level 2 object
      * @param digest: level 0 seqCol digest*/
@@ -27,8 +31,7 @@ public class SeqColLevelTwoService {
         // 1 DATABASE LOOKUP
         Optional<SeqColLevelOneEntity> levelOneEntity = levelOneService.getSeqColLevelOneByDigest(digest);
         if (!levelOneEntity.isPresent()) {
-            //TODO THROW EXCEPTION
-            System.out.println("EXCPETION: seqCol with digest: " + digest + "doesn't exists !");
+            logger.error("seqCol with digest: " + digest + " doesn't exists !");
             return Optional.empty();
         }
         // 2 DATABASE LOOKUPS
@@ -46,7 +49,10 @@ public class SeqColLevelTwoService {
                     levelTwoEntity.setSequences(extendedData.getExtendedSeqColData().getObject());
                     break;
                 case md5DigestsOfSequences:
-                    levelTwoEntity.setMd5Sequences(extendedData.getExtendedSeqColData().getObject());
+                    levelTwoEntity.setMd5DigestsOfSequences(extendedData.getExtendedSeqColData().getObject());
+                    break;
+                case sortedNameLengthPairs:
+                    levelTwoEntity.setSortedNameLengthPairs(extendedData.getExtendedSeqColData().getObject());
                     break;
             }
         }
@@ -81,11 +87,18 @@ public class SeqColLevelTwoService {
         }
         extendedNames.get().setAttributeType(SeqColExtendedDataEntity.AttributeType.names);
 
+        Optional<SeqColExtendedDataEntity> extendedSortedNameLengthPairs = extendedDataService.getExtendedAttributeByDigest(levelOneEntity.getSeqColLevel1Object().getSortedNameLengthPairs());
+        if (!extendedSortedNameLengthPairs.isPresent()) {
+            throw new RuntimeException("Extended names data with digest: " + levelOneEntity.getSeqColLevel1Object().getNames() + " not found");
+        }
+        extendedSortedNameLengthPairs.get().setAttributeType(SeqColExtendedDataEntity.AttributeType.sortedNameLengthPairs);
+
         return Arrays.asList(
                 extendedSequences.get(),
                 extendedMD5Sequences.get(),
                 extendedLengths.get(),
-                extendedNames.get()
+                extendedNames.get(),
+                extendedSortedNameLengthPairs.get()
         );
     }
 
@@ -104,7 +117,10 @@ public class SeqColLevelTwoService {
                     levelTwoEntity.setSequences(extendedData.getExtendedSeqColData().getObject());
                     break;
                 case md5DigestsOfSequences:
-                    levelTwoEntity.setMd5Sequences(extendedData.getExtendedSeqColData().getObject());
+                    levelTwoEntity.setMd5DigestsOfSequences(extendedData.getExtendedSeqColData().getObject());
+                    break;
+                case sortedNameLengthPairs:
+                    levelTwoEntity.setSortedNameLengthPairs(extendedData.getExtendedSeqColData().getObject());
                     break;
             }
         }

@@ -19,8 +19,10 @@ import uk.ac.ebi.eva.evaseqcol.io.SeqColWriter;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SeqColServiceTest {
 
 
-    private final String TEST_DIGEST = "eJ8GCVLEVtdnCN4OSqfkf6KoEOK9OUlr";
+    private final String TEST_DIGEST = "rkTW1yZ0e22IN8K-0frqoGOMT8dynNyE"; // seqCol inserted by the SeqColWriter
 
     @Autowired
     private SeqColService seqColService;
@@ -41,7 +43,7 @@ class SeqColServiceTest {
 
 
     @Container
-    static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15.2");
+    static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:14.0");
 
     @DynamicPropertySource
     static void dataSourceProperties(DynamicPropertyRegistry registry) {
@@ -89,4 +91,26 @@ class SeqColServiceTest {
         assertFalse(seqColService.unbalancedDuplicatesPresent(A2, B2));
         assertTrue(seqColService.unbalancedDuplicatesPresent(A3, B3));
     }
+
+    @Test
+    void A_And_B_Same_OrderTest() {
+        List<String> listA1 = new ArrayList<>(Arrays.asList("chr1", "chr2", "chr3", "M"));
+        List<String> listA2 = new ArrayList<>(Arrays.asList("1", "2", "2", "3"));
+        List<String> listA3 = new ArrayList<>(Arrays.asList("ch1", "B", "ch2", "ch3"));
+        List<String> listA4 = new ArrayList<>(Arrays.asList("ch1", "B", "ch2", "ch3"));
+        List<String> listA5 = new ArrayList<>(Arrays.asList("1", "2", "2"));
+
+        List<String> listB1 = new ArrayList<>(Arrays.asList("chr1", "chr2", "chr3"));
+        List<String> listB2 = new ArrayList<>(Arrays.asList("1", "2", "2"));
+        List<String> listB3 = new ArrayList<>(Arrays.asList("ch1", "A", "ch2", "ch3"));
+        List<String> listB4 = new ArrayList<>(Arrays.asList("A", "ch1", "ch2", "ch3"));
+        List<String> listB5 = new ArrayList<>(Arrays.asList("2", "1", "2"));
+
+        assertTrue(seqColService.check_A_And_B_Same_Order(listA1, listB1));
+        assertTrue(seqColService.check_A_And_B_Same_Order(listA2, listB2));
+        assertTrue(seqColService.check_A_And_B_Same_Order(listA3, listB3));
+        assertTrue(seqColService.check_A_And_B_Same_Order(listA4, listB4));
+        assertFalse(seqColService.check_A_And_B_Same_Order(listA5, listB5));
+    }
+
 }

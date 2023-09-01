@@ -38,7 +38,7 @@ class SeqColExtendedDataServiceTest {
     private SeqColExtendedDataService extendedDataService;
 
     @Container
-    static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15.2");
+    static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:14.0");
 
     @DynamicPropertySource
     static void dataSourceProperties(DynamicPropertyRegistry registry) {
@@ -63,7 +63,7 @@ class SeqColExtendedDataServiceTest {
     @Test
     /**
      * Adding multiple seqCol extended data objects*/
-    void addSeqColExtendedData() {
+    void addSeqColExtendedData() throws IOException {
         assertNotNull(assemblyEntity);
         assertEquals(assemblySequenceEntity.getSequences().size(), assemblyEntity.getChromosomes().size());
         SeqColExtendedDataEntity seqColLengthsObject = SeqColExtendedDataEntity.constructSeqColLengthsObject(assemblyEntity);
