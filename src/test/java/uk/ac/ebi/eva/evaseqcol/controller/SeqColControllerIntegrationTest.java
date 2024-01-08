@@ -65,7 +65,7 @@ public class SeqColControllerIntegrationTest {
 
      @BeforeEach
      void setUp() throws IOException {
-        seqColWriter.write(); // Save some seqCol objects into the database
+        seqColWriter.create(); // Save some seqCol objects into the database
         baseUrl = baseUrl + ":" + port + contextPath ;
      }
 
@@ -83,7 +83,8 @@ public class SeqColControllerIntegrationTest {
         Map<String, List<String>> levelTwoEntity = restTemplate.getForObject(finalRequest + level_2_path, Map.class);
         assertNotNull(levelOneEntity);
         assertNotNull(levelTwoEntity);
-        assertNotNull(levelOneEntity.get("digest"));
+        assertNotNull(levelTwoEntity.get("names"));
+        assertNotNull(levelOneEntity.get("lengths"));
         assertNotNull(levelTwoEntity.get("sequences"));
     }
 

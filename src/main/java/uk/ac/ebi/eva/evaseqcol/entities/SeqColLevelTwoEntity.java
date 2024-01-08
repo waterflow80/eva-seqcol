@@ -14,10 +14,10 @@ public class SeqColLevelTwoEntity extends SeqColEntity{
 
     private List<String> sequences;
     private List<String> names;
-    private List<String> lengths;
-    @JsonProperty("md5-sequences")
+    private List<Integer> lengths;
+    @JsonProperty("md5_sequences")
     private List<String> md5DigestsOfSequences;
-    @JsonProperty("sorted-name-length-pairs")
+    @JsonProperty("sorted_name_length_pairs")
     private List<String> sortedNameLengthPairs;
 
     public SeqColLevelTwoEntity setDigest(String digest) {

@@ -55,7 +55,7 @@ class SeqColServiceTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        seqColWriter.write(); // This will write some seqCol objects to the database
+        seqColWriter.create(); // This will write some seqCol objects to the database
     }
 
     @AfterEach
@@ -111,6 +111,14 @@ class SeqColServiceTest {
         assertTrue(seqColService.check_A_And_B_Same_Order(listA3, listB3));
         assertTrue(seqColService.check_A_And_B_Same_Order(listA4, listB4));
         assertFalse(seqColService.check_A_And_B_Same_Order(listA5, listB5));
+    }
+
+    @Test
+    void commonElementsCountTest() {
+        List<String> listA1 = new ArrayList<>(Arrays.asList("chr1", "chr2", "chr3", "A"));
+        List<String> listA2 = new ArrayList<>(Arrays.asList("chr1", "chr5", "chr3", "M", "A"));
+
+        assertEquals(3, seqColService.getCommonElementsCount(listA1, listA2));
     }
 
 }
