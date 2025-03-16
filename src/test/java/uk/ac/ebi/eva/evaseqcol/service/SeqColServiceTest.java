@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SeqColServiceTest {
 
 
-    private final String TEST_DIGEST = "rkTW1yZ0e22IN8K-0frqoGOMT8dynNyE"; // seqCol inserted by the SeqColWriter
+    private final String TEST_DIGEST = "AOhJezyy4yRW-GQqnAnD0HQhjcpOb4UX"; // seqCol inserted by the SeqColWriter
 
     @Autowired
     private SeqColService seqColService;

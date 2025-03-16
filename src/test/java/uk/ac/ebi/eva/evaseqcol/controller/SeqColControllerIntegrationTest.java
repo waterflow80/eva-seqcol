@@ -34,7 +34,7 @@ public class SeqColControllerIntegrationTest {
 
     private final String RETRIEVAL_PATH = "/collection";
 
-    private final String SEQCOL_DIGEST = "3mTg0tAA3PS-R1TzelLVWJ2ilUzoWfVq"; // seqCol test digest
+    private final String SEQCOL_DIGEST = "ySaGQd8xaXhhfyR5PsTBp4ggbXXVub7w"; // seqCol test digest
 
     private final String SERVICE_INFO_PATH = "/service-info";
 
