@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/")
+@Tag(name = "Seqcol endpoints")
 public class SeqColController {
 
     private SeqColService seqColService;
@@ -51,7 +53,16 @@ public class SeqColController {
             required = true) @PathVariable String digest,
             @Parameter(name = "level",
             description = "The desired output's level (1 or 2)",
-            example = "1") @RequestParam(required = false) String level) {
+            example = "1") @RequestParam(required = false) String level,
+            @Parameter(name = "metadata",
+            description = "A boolean value that indicates if we need the metadata of the given seqcol digest",
+            example = "true, 1, yes")
+            @RequestParam(required = false, defaultValue = "false") boolean metadata) {
+        if (metadata) {
+            return new ResponseEntity<>(
+                    seqColService.getSeqColMetadataBySeqColDigest(digest), HttpStatus.OK
+            );
+        }
         if (level == null) level = "none";
         try {
             switch (level) {

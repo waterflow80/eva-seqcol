@@ -17,10 +17,8 @@ public abstract class SeqColEntity {
 
     protected String digest; // The level 0 digest
 
-    protected NamingConvention namingConvention;
-
 
     public enum NamingConvention {
-        ENA, GENBANK, UCSC
+        ENA, GENBANK, UCSC, TEST
     }
 }
